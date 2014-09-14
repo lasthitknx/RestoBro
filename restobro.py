@@ -5,12 +5,12 @@ ENCOUNTER_END_MESSAGE = 'ENCOUNTER_END'
 
 
 class RestoBro():
-    def __init__(self, logfile='WoWCombatLog.txt'):
+    def __init__(self, logfile='WoWCombatLog.txt', initialize=True):
         self.log = logfile
-        self.fights = self.parse_fights()
-
-    def initialize(self):
-        self.parse_fights(initialize=True)
+        if initialize is False:
+            self.fights = self.parse_fights()
+        else:
+            self.fights = self.parse_fights(initialize=True)
 
     def parse_fights(self, initialize=False):
         fights = {}
