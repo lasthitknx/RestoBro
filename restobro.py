@@ -83,7 +83,7 @@ class RestoBro():
                         if log[line].split('  ')[1].split(',')[0] == 'SPELL_CAST_SUCCESS':
                             print(log[line])
                     if log[line].split('  ')[1].split(',')[10] == '"Спокойствие"':
-                        if log[line].split('  ')[1].split(',')[0] == 'SPELL_CAST_SUCCESS':
+                        if log[line].split('  ')[1].split(',')[0] == 'SPELL_AURA_APPLIED':
                             print(log[line])
                 except IndexError:
                     pass
