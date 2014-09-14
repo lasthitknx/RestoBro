@@ -3,16 +3,15 @@ RestoBro
 RestoBro это утилита для глубокого анализа действий игрока во время боя с рейдовым боссом
 Подключить RestoBro очень просто :
 ```
->>> from restobro import RestoBro
+from restobro import RestoBro
 ```
 Начало работы с RestoBro:
 ```
->>> bro = RestoBro(logfile='WoWCombatLog.txt', initialize=False)
+bro = RestoBro(logfile='WoWCombatLog.txt', initialize=False)
 ```
 Передаем RestoBro путь к нашему файлу с логом и, если хотим посмотреть какие бои есть в логе устанавливаем `initialize=True`.
 RestoBro покажет нам какие бои он нашел в логе :
 ```
->>> 
 USE PULL NUMBER TO CALL CLASS METHODS WITH 'pull_index' VARIABLE REQUIRED
 PULL #10 | ENCOUNTER : "Идеалы клакси" | DURATION 06:43 | TOTAL LINES : 92453
 PULL #11 | ENCOUNTER : "Идеалы клакси" | DURATION 11:16 | TOTAL LINES : 167234
@@ -34,8 +33,8 @@ PULL #9 | ENCOUNTER : "Идеалы клакси" | DURATION 04:19 | TOTAL LINES
 ```
 Посмотреть более детальную информацию можно так :
 ```
->>>for fight in bro.fights:
-print(fight+' '+str(bro.fights[fight]))
+for fight in bro.fights:
+  print(fight+' '+str(bro.fights[fight]))
 ```
 Получим вот такой результат:
 ```
@@ -58,7 +57,7 @@ print(fight+' '+str(bro.fights[fight]))
 Метод `applied_without_harmony` принимает порядковый номер пула и ник исследуемого друида и возвращает строки из файла лога соответсвующие кастам хотов и "Спокойствия" без баффа "Гармония" :
 
 ```
->>>bro.applied_without_harmony('10', 'Свирм')
+bro.applied_without_harmony('10', 'Свирм')
 ```
 Получаем результат :
 ```
