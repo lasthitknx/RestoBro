@@ -1,18 +1,31 @@
 import datetime
+from itertools import groupby
 
 ENCOUNTER_START_MESSAGE = 'ENCOUNTER_START'
 ENCOUNTER_END_MESSAGE = 'ENCOUNTER_END'
 
+def shift_time(encounter_start, current_line):
+    current_time = datetime.datetime.strptime(current_line, '%H:%M:%S.%f') - datetime.datetime.strptime(encounter_start, '%H:%M:%S.%f')
+    return str(current_time).split(':')[1]+':'+str(current_time).split(':')[2].split('.')[0]
+
 
 class RestoBro():
-    def __init__(self, logfile='WoWCombatLog.txt', initialize=True):
+    def __init__(self, logfile='WoWCombatLog.txt'):
         self.log = logfile
-        if initialize is False:
-            self.fights = self.parse_fights()
-        else:
-            self.fights = self.parse_fights(initialize=True)
+        self.fights = self.parse_fights()
 
-    def parse_fights(self, initialize=False):
+    def show_fights(self):
+        print('USE PULL NUMBER TO CALL CLASS METHODS WITH \'pull_index\' VARIABLE REQUIRED')
+        for fight in self.fights:
+                try:
+                    fight_duration = datetime.datetime.strptime(self.fights[fight]['end_time'], '%H:%M:%S.%f') - datetime.datetime.strptime(self.fights[fight]['start_time'], '%H:%M:%S.%f')
+                    fight_duration_normalized = str(fight_duration).split(':')[1]+':'+str(fight_duration).split(':')[2].split('.')[0]
+                    print('PULL #%s | ENCOUNTER : %s | DURATION %s | TOTAL LINES : %s' % (fight, self.fights[fight]['encounter'],
+                    fight_duration_normalized, str(int(self.fights[fight]['end_line'])-int(self.fights[fight]['start_line']))))
+                except KeyError:
+                    print('PULL #%s CAN\'T BE PARSED' % (fight,))
+
+    def parse_fights(self):
         fights = {}
         key = '0'
         current_fight = {}
@@ -35,16 +48,6 @@ class RestoBro():
                 fights[key] = current_fight
                 key = str(int(key) + 1)
                 current_fight = {}
-        if initialize is True:
-            print('USE PULL NUMBER TO CALL CLASS METHODS WITH \'pull_index\' VARIABLE REQUIRED')
-            for fight in fights:
-                try:
-                    fight_duration = datetime.datetime.strptime(fights[fight]['end_time'], '%H:%M:%S.%f') - datetime.datetime.strptime(fights[fight]['start_time'], '%H:%M:%S.%f')
-                    fight_duration_normalized = str(fight_duration).split(':')[1]+':'+str(fight_duration).split(':')[2].split('.')[0]
-                    print('PULL #%s | ENCOUNTER : %s | DURATION %s | TOTAL LINES : %s' % (fight, fights[fight]['encounter'],
-                    fight_duration_normalized, str(int(fights[fight]['end_line'])-int(fights[fight]['start_line']))))
-                except KeyError:
-                    print('PULL #%s CAN\'T BE PARSED' % (fight,))
         return fights
 
     def parse_single_fight(self, pull_index, actor):
@@ -71,26 +74,50 @@ class RestoBro():
                     key = str(int(key) + 1)
                     current_range = {}
         for r in ranges:
-            for line in range(ranges[r]['start'], ranges[r]['end']):
-                try:
-                    if log[line].split('  ')[1].split(',')[10] == '"Омоложение"':
-                        if log[line].split('  ')[1].split(',')[0] == 'SPELL_AURA_APPLIED':
-                            print(log[line])
-                    if log[line].split('  ')[1].split(',')[10] == '"Жизнецвет"':
-                        if log[line].split('  ')[1].split(',')[0] == 'SPELL_AURA_APPLIED':
-                            print(log[line])
-                    if log[line].split('  ')[1].split(',')[10] == '"Буйный рост"':
-                        if log[line].split('  ')[1].split(',')[0] == 'SPELL_CAST_SUCCESS':
-                            print(log[line])
-                    if log[line].split('  ')[1].split(',')[10] == '"Спокойствие"':
-                        if log[line].split('  ')[1].split(',')[0] == 'SPELL_AURA_APPLIED':
-                            print(log[line])
-                except IndexError:
-                    pass
+            try:
+                for line in range(ranges[r]['start'], ranges[r]['end']):
+                    try:
+                        if log[line].split('  ')[1].split(',')[10] == '"Омоложение"':
+                            if log[line].split('  ')[1].split(',')[0] == 'SPELL_AURA_APPLIED':
+                                print('%s | Омоложение APPLIED @ %s' % (shift_time(log[0].split(' ')[1], log[line].split(' ')[1]), log[line].split('  ')[1].split(',')[6]))
+                        if log[line].split('  ')[1].split(',')[10] == '"Жизнецвет"':
+                            if log[line].split('  ')[1].split(',')[0] == 'SPELL_AURA_APPLIED':
+                                print('%s | Жизнецвет APPLIED @ %s' % (shift_time(log[0].split(' ')[1], log[line].split(' ')[1]), log[line].split('  ')[1].split(',')[6]))
+                        if log[line].split('  ')[1].split(',')[10] == '"Буйный рост"':
+                            if log[line].split('  ')[1].split(',')[0] == 'SPELL_CAST_SUCCESS':
+                                print('%s | Буйный рост CAST' % (shift_time(log[0].split(' ')[1], log[line].split(' ')[1]),))
+                        if log[line].split('  ')[1].split(',')[10] == '"Спокойствие"':
+                            if log[line].split('  ')[1].split(',')[0] == 'SPELL_AURA_APPLIED':
+                                print('%s | Спокойствие CAST' % (shift_time(log[0].split(' ')[1], log[line].split(' ')[1]),))
+                    except IndexError:
+                        pass
+            except KeyError:
+                pass
 
-
-
-
-
-
-
+    def track_mushrooms_explosions(self, pull_index, actor):
+        self.parse_single_fight(pull_index, actor)
+        log = open('tmp.txt', encoding='utf-8').readlines()
+        lines = []
+        explosions = []
+        for line in log:
+            if 'SPELL_HEAL' and '"Дикий гриб: лечение"' in line:
+                if line.split('  ')[1].split(',')[0] == 'SPELL_HEAL':
+                    i = []
+                    for item in line.split(' '):
+                        i.append(item)
+                    lines.append(i)
+        for k, line in groupby(lines, lambda x: x[1]):
+            explosions.append(dict(date=k, data=list(l for l in line)))
+        for e in explosions:
+            print('MUSHROOM EXPLOSION @ %s' % (shift_time(log[0].split(' ')[1], e['date'])))
+            print('TOTAL TARGETS FOR EXPLOSION : %s' % (len(e['data']),))
+            total_mushroom = 0
+            for unit in e['data']:
+                target = unit[3].split(',')[6]
+                total_heal = unit[5].split(',')[10]
+                overheal = unit[5].split(',')[11]
+                real_heal = int(total_heal) - int(overheal)
+                total_mushroom = total_mushroom + real_heal
+                print('%s HEALED FOR %s | %s overheal' % (target, real_heal, overheal))
+            print('MUSHROOM TOTAL HEAL %s' % (total_mushroom,))
+            print('-'*40)
