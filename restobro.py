@@ -126,7 +126,7 @@ class RestoBro():
             print('MUSHROOM TOTAL HEAL %s' % (total_mushroom,))
             print('-'*40)
 
-    def cleave_tracker(self, pull_index, actor):
+    def cleave_tracker(self, pull_index, actor, show_all=False):
         self.parse_single_fight(pull_index, actor)
         log = open('tmp.txt', encoding='utf-8').readlines()
         cleaves = []
@@ -140,10 +140,12 @@ class RestoBro():
                     cleaves.append(i)
         for k, line in groupby(cleaves, lambda x: x[1]):
             data.append(dict(date=k, data=list(l for l in line)))
+        healed = 0
         for item in data:
-            total_cleave_heal = 0
-            total_cleave_overheal = 0
+
             for unit in item['data']:
+                total_cleave_heal = 0
+                total_cleave_overheal = 0
                 try:
                     heal = unit[4].split(',')[10]
                     overheal = unit[4].split(',')[11]
@@ -152,5 +154,10 @@ class RestoBro():
                     total_cleave_overheal = total_cleave_overheal + int(overheal)
                 except IndexError:
                     pass
-            print('CLEAVE @ %s | HEAL : %s | OVERHEAL : %s | TOTAL TARGETS : %s' % (shift_time(log[0].split(' ')[1], item['date']), real_heal, overheal, len(item['data'])))
-
+                if show_all is True:
+                    print('CLEAVE @ %s | HEAL : %s | OVERHEAL : %s | TOTAL TARGETS : %s' % (shift_time(log[0].split(' ')[1], item['date']), total_cleave_heal, total_cleave_overheal, len(item['data'])))
+                else:
+                    if total_cleave_heal > 0:
+                        healed = healed + 1
+                        print('CLEAVE @ %s | HEAL : %s | OVERHEAL : %s | TOTAL TARGETS : %s' % (shift_time(log[0].split(' ')[1], item['date']), total_cleave_heal, total_cleave_overheal, len(item['data'])))
+        print('TOTAL PROCKS : %s | EFFECTIVE : %s' % (len(data), healed))
