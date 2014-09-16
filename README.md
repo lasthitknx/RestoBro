@@ -78,6 +78,7 @@ MUSHROOM TOTAL HEAL 17672
 
 Передаем в метод номер пула и ник нашего персонажа и если хотим посмотреть проки которые полностью ушли в оверхил устанавливаем параметр `show_all=True`. По умолчанию RestoBro покажет только эффективные проки 
 ```
+bro.cleave_tracker('11', 'Свирм')
 CLEAVE @ 00:28 | HEAL : 12382 | OVERHEAL : 0 | TOTAL TARGETS : 5
 CLEAVE @ 00:34 | HEAL : 47993 | OVERHEAL : 0 | TOTAL TARGETS : 4
 CLEAVE @ 00:44 | HEAL : 24764 | OVERHEAL : 0 | TOTAL TARGETS : 5
