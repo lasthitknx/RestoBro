@@ -26,6 +26,10 @@ class RestoBro():
                     print('PULL #%s CAN\'T BE PARSED' % (fight,))
 
     def parse_fights(self):
+        """
+        Method parses logfile to define pulls as lines range.
+        Returns dict object with keys as pull number and values as pull information
+        """
         fights = {}
         key = '0'
         current_fight = {}
@@ -121,3 +125,32 @@ class RestoBro():
                 print('%s HEALED FOR %s | %s overheal' % (target, real_heal, overheal))
             print('MUSHROOM TOTAL HEAL %s' % (total_mushroom,))
             print('-'*40)
+
+    def cleave_tracker(self, pull_index, actor):
+        self.parse_single_fight(pull_index, actor)
+        log = open('tmp.txt', encoding='utf-8').readlines()
+        cleaves = []
+        data = []
+        for line in log:
+            if 'SPELL_HEAL' and '"Рассекающий удар"' in line:
+                if line.split('  ')[1].split(',')[0] == 'SPELL_HEAL':
+                    i = []
+                    for item in line.split(' '):
+                        i.append(item)
+                    cleaves.append(i)
+        for k, line in groupby(cleaves, lambda x: x[1]):
+            data.append(dict(date=k, data=list(l for l in line)))
+        for item in data:
+            total_cleave_heal = 0
+            total_cleave_overheal = 0
+            for unit in item['data']:
+                try:
+                    heal = unit[4].split(',')[10]
+                    overheal = unit[4].split(',')[11]
+                    real_heal = int(heal) - int(overheal)
+                    total_cleave_heal = total_cleave_heal + int(real_heal)
+                    total_cleave_overheal = total_cleave_overheal + int(overheal)
+                except IndexError:
+                    pass
+            print('CLEAVE @ %s | HEAL : %s | OVERHEAL : %s | TOTAL TARGETS : %s' % (shift_time(log[0].split(' ')[1], item['date']), real_heal, overheal, len(item['data'])))
+
