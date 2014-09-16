@@ -2,6 +2,8 @@ import datetime
 from itertools import groupby
 from collections import OrderedDict
 
+#UPDATE `rejuvenation_tracker` : sort data by time rejuvenation applied
+
 ENCOUNTER_START_MESSAGE = 'ENCOUNTER_START'
 ENCOUNTER_END_MESSAGE = 'ENCOUNTER_END'
 
