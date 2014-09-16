@@ -196,15 +196,17 @@ class RestoBro():
                             heal = log[line].split('  ')[1].split(',')[20]
                             overheal = log[line].split('  ')[1].split(',')[21]
                             real_heal = int(heal) - int(overheal)
-                            if log[line].split('  ')[1].split(',')[23] == 1:
-                                critical = True
+                            if log[line].split('  ')[1].split(',')[-1] == '1\n':
+                                data = [real_heal, overheal, 'CRITICAL !']
                             else:
-                                critical = False
-                            data = [real_heal, overheal, critical]
+                                data = [real_heal, overheal]
                             ticks.append(data)
             rejuvenations_applied[rj]['ticks'] = ticks
         for rj in rejuvenations_applied:
             print('%s REJUVENATION APPLIED @ %s' % (shift_time(log[0].split(' ')[1], rejuvenations_applied[rj]['start_time']), rj.split(' ')[1]))
-
             for item in enumerate(rejuvenations_applied[rj]['ticks']):
-                print('TICK #%s | HEAL %s | OVERHEAL %s | CRITICAL %s' % (item[0], item[1][0], item[1][1], item[1][2]))
+                try:
+                    print('TICK #%s | HEAL %s | OVERHEAL %s | %s' % (item[0], item[1][0], item[1][1], item[1][2]))
+                except IndexError:
+                    print('TICK #%s | HEAL %s | OVERHEAL %s' % (item[0], item[1][0], item[1][1]))
+
