@@ -1,5 +1,6 @@
 import datetime
 from itertools import groupby
+from collections import OrderedDict
 
 ENCOUNTER_START_MESSAGE = 'ENCOUNTER_START'
 ENCOUNTER_END_MESSAGE = 'ENCOUNTER_END'
@@ -162,3 +163,48 @@ class RestoBro():
                     healed = healed + 1
                     print('CLEAVE @ %s | HEAL : %s | OVERHEAL : %s | TOTAL TARGETS : %s' % (shift_time(log[0].split(' ')[1], item['date']), total_cleave_heal, total_cleave_overheal, len(item['data'])))
         print('TOTAL PROCKS : %s | EFFECTIVE : %s' % (len(data), healed))
+
+    def rejuvenation_tracker(self, pull_index, actor):
+        self.parse_single_fight(pull_index, actor)
+        log = open('tmp.txt', encoding='utf-8').readlines()
+        rejuvenations_applied = {}
+        for line in log:
+            if '"Омоложение"' in line:
+                if line.split('  ')[1].split(',')[0] == 'SPELL_AURA_APPLIED':
+                    time = shift_time(log[0].split(' ')[1], line.split(' ')[1])
+                    target = line.split('  ')[1].split(',')[6]
+                    key = time+' '+target
+                    rejuvenations_applied[key] = {'start': log.index(line), 'start_time': line.split(' ')[1]}
+        for rj in rejuvenations_applied:
+            target = rj.split(' ')[1]
+            for line in range(rejuvenations_applied[rj]['start'], len(log)):
+                try:
+                    if 'SPELL_AURA_REMOVED' in log[line]:
+                        if log[line].split('  ')[1].split(',')[10] == '"Омоложение"':
+                            if log[line].split('  ')[1].split(',')[6] == target:
+                                rejuvenations_applied[rj]['end'] = line
+                                rejuvenations_applied[rj]['end_time'] = log[line].split(' ')[1]
+                                break
+                except IndexError:
+                    pass
+        for rj in rejuvenations_applied:
+            ticks = []
+            for line in range(rejuvenations_applied[rj]['start'], rejuvenations_applied[rj]['end']):
+                if '"Омоложение"' in log[line]:
+                    if log[line].split('  ')[1].split(',')[0] == 'SPELL_PERIODIC_HEAL':
+                        if log[line].split('  ')[1].split(',')[6] == rj.split(' ')[1]:
+                            heal = log[line].split('  ')[1].split(',')[20]
+                            overheal = log[line].split('  ')[1].split(',')[21]
+                            real_heal = int(heal) - int(overheal)
+                            if log[line].split('  ')[1].split(',')[23] == 1:
+                                critical = True
+                            else:
+                                critical = False
+                            data = [real_heal, overheal, critical]
+                            ticks.append(data)
+            rejuvenations_applied[rj]['ticks'] = ticks
+        for rj in rejuvenations_applied:
+            print('%s REJUVENATION APPLIED @ %s' % (shift_time(log[0].split(' ')[1], rejuvenations_applied[rj]['start_time']), rj.split(' ')[1]))
+
+            for item in enumerate(rejuvenations_applied[rj]['ticks']):
+                print('TICK #%s | HEAL %s | OVERHEAL %s | CRITICAL %s' % (item[0], item[1][0], item[1][1], item[1][2]))
