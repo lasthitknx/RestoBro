@@ -30,6 +30,31 @@ PULL #9 | ENCOUNTER : "Идеалы клакси" | DURATION 04:19 | TOTAL LINES
 PULL #8 | ENCOUNTER : "Идеалы клакси" | DURATION 07:46 | TOTAL LINES : 119517
 ```
 
+Метод `rejuvenation_tracker()` покажет все касты Омоложения и информацию по каждому тику
+
+Передаем в метод номер пула и ник нашего персонажа (*обратите внимание что номер пула необходимо передавать в виде строки*):
+```
+bro.rejuvenation_tracker('11', 'Свирм')
+
+06:08 REJUVENATION APPLIED @ "Дезвин"
+TICK #0 | HEAL 59973 | OVERHEAL 0
+TICK #1 | HEAL 33295 | OVERHEAL 92471 | CRITICAL !
+TICK #2 | HEAL 0 | OVERHEAL 59974
+TICK #3 | HEAL 0 | OVERHEAL 59973
+TICK #4 | HEAL 0 | OVERHEAL 59973
+TICK #5 | HEAL 59973 | OVERHEAL 0
+TICK #6 | HEAL 0 | OVERHEAL 59973
+...
+08:15 REJUVENATION APPLIED @ "Кокси"
+TICK #0 | HEAL 94140 | OVERHEAL 0 | CRITICAL !
+TICK #1 | HEAL 44892 | OVERHEAL 0
+TICK #2 | HEAL 0 | OVERHEAL 44892
+TICK #3 | HEAL 0 | OVERHEAL 44892
+TICK #4 | HEAL 0 | OVERHEAL 94140 | CRITICAL !
+TICK #5 | HEAL 0 | OVERHEAL 94140 | CRITICAL !
+TICK #6 | HEAL 0 | OVERHEAL 44892
+```
+
 Метод `applied_without_harmony()` ( *неактуально в Warlords of Draenor* ) покажет касты ХоТов и Спокойствия без баффа Гармонии.
 
 Передаем в метод номер пула и ник нашего персонажа (*обратите внимание что номер пула необходимо передавать в виде строки*):
