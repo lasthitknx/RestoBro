@@ -74,6 +74,25 @@ TOTAL TARGETS FOR EXPLOSION : 12
 MUSHROOM TOTAL HEAL 17672
 ```
 
+Метод `cleave_tracker` ( *неактуально в Warlords of Draenor* ) покажет детальную информацию по каждому проку тринкета *Изъеденный кислотой зуб Тока* . 
+
+Передаем в метод номер пула и ник нашего персонажа и если хотим посмотреть проки которые полностью ушли в оверхил устанавливаем параметр `show_all=True`. По умолчанию ResoBro покажет только эффективные проки 
+```
+CLEAVE @ 00:28 | HEAL : 12382 | OVERHEAL : 0 | TOTAL TARGETS : 5
+CLEAVE @ 00:34 | HEAL : 47993 | OVERHEAL : 0 | TOTAL TARGETS : 4
+CLEAVE @ 00:44 | HEAL : 24764 | OVERHEAL : 0 | TOTAL TARGETS : 5
+CLEAVE @ 01:01 | HEAL : 9868 | OVERHEAL : 0 | TOTAL TARGETS : 3
+CLEAVE @ 01:01 | HEAL : 8988 | OVERHEAL : 880 | TOTAL TARGETS : 2
+...
+CLEAVE @ 10:05 | HEAL : 128052 | OVERHEAL : 0 | TOTAL TARGETS : 3
+CLEAVE @ 10:05 | HEAL : 26666 | OVERHEAL : 0 | TOTAL TARGETS : 5
+CLEAVE @ 10:05 | HEAL : 26666 | OVERHEAL : 0 | TOTAL TARGETS : 5
+CLEAVE @ 10:07 | HEAL : 35497 | OVERHEAL : 11623 | TOTAL TARGETS : 5
+TOTAL PROCKS : 313 | HEALED : 138
+```
+
+
+
 To be continued
 
 
