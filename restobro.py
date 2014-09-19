@@ -212,3 +212,27 @@ class RestoBro():
                 except IndexError:
                     print('TICK #%s | HEAL %s | OVERHEAL %s' % (item[0], item[1][0], item[1][1]))
 
+    def show_totals(self, pull_index, actor):
+        self.parse_single_fight(pull_index, actor)
+        log = open('tmp.txt', encoding='utf-8').readlines()
+        totals = {}
+        for line in log:
+            try:
+                if line.split('  ')[1].split(',')[0] == 'SPELL_PERIODIC_HEAL' or 'SPELL_HEAL':
+                    if line.split('  ')[1].split(',')[2] == '\"'+actor+'\"':
+                        spell = line.split('  ')[1].split(',')[10]
+                        heal = line.split('  ')[1].split(',')[20]
+                        overheal = line.split('  ')[1].split(',')[21]
+                        real_heal = int(heal) - int(overheal)
+                        if spell in totals:
+                            totals[spell] = {'heal': int(totals[spell]['heal']) + int(real_heal), 'overheal': int(totals[spell]['overheal']) + int(overheal) }
+                        else:
+                            totals[spell] = {'heal': real_heal, 'overheal': overheal}
+            except IndexError:
+                pass
+        data = []
+        for t in totals:
+            data.append((t, totals[t]['heal'], totals[t]['overheal']))
+        for d in sorted(data, key=lambda x: x[1], reverse=True):
+            if d[2] > 0:
+                print('%s | HEALING  : %s | OVERHEALING : %s' % (d[0], format(d[1], ',d'), format(d[2], ',d')))
