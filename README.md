@@ -37,9 +37,9 @@ PULL #8 | ENCOUNTER : "Идеалы клакси" | DURATION 07:46 | TOTAL LINES
 bro.show_totals('11', 'Свирм')
 
 "Омоложение" | HEALING  : 21,568,617 | OVERHEALING : 69,867,776
-"Природная чуткость" | HEALING  : 21,085,442 | OVERHEALING : 4,667,254
 "Период цветения" | HEALING  : 12,580,539 | OVERHEALING : 32,329,929
 "Буйный рост" | HEALING  : 12,280,548 | OVERHEALING : 39,724,238
+"Природная чуткость" | HEALING  : 8,501,537 | OVERHEALING : 4,667,677
 "Жизнецвет" | HEALING  : 6,532,375 | OVERHEALING : 19,414,907
 "Дух Чи-Цзи" | HEALING  : 5,957,677 | OVERHEALING : 6,222,724
 "Спокойствие" | HEALING  : 5,188,138 | OVERHEALING : 25,744,175
