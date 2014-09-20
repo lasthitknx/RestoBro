@@ -212,13 +212,13 @@ class RestoBro():
                 except IndexError:
                     print('TICK #%s | HEAL %s | OVERHEAL %s' % (item[0], item[1][0], item[1][1]))
 
-    def show_totals(self, pull_index, actor):
+def show_totals(self, pull_index, actor):
         self.parse_single_fight(pull_index, actor)
         log = open('tmp.txt', encoding='utf-8').readlines()
         totals = {}
         for line in log:
             try:
-                if line.split('  ')[1].split(',')[0] == 'SPELL_PERIODIC_HEAL' or 'SPELL_HEAL':
+                if line.split('  ')[1].split(',')[0] == 'SPELL_PERIODIC_HEAL' or line.split('  ')[1].split(',')[0] == 'SPELL_HEAL':
                     if line.split('  ')[1].split(',')[2] == '\"'+actor+'\"':
                         spell = line.split('  ')[1].split(',')[10]
                         heal = line.split('  ')[1].split(',')[20]
